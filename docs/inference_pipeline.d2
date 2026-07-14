@@ -1,0 +1,128 @@
+# MixtureAdaptiveAgent v2 — pipeline de inferencia
+direction: down
+
+title: {
+  label: "Inferencia del agente adaptativo (MixtureAdaptiveAgent v2)"
+  near: top-center
+  style: {
+    font-size: 22
+    bold: true
+  }
+}
+
+observe: |md
+  **1. Observar**
+| {
+  style: {
+    fill: "#E8F5EF"
+    stroke: "#0B6E4F"
+    border-radius: 8
+  }
+
+  Obs: "GameObservation\nhistorial + scores" {
+    style: {fill: "#FFFFFF"; stroke: "#0B6E4F"}
+  }
+  Mem: "SessionPlayerMemory\nprior ≤36 rondas" {
+    style: {fill: "#FFFFFF"; stroke: "#B85C38"}
+  }
+  Hist: "effective_history" {
+    style: {fill: "#FFFFFF"; stroke: "#1C1A17"; bold: true}
+  }
+
+  Obs -> Hist
+  Mem -> Hist
+}
+
+predict: |md
+  **2. Predecir**
+| {
+  style: {
+    fill: "#E7EEF6"
+    stroke: "#1F4E79"
+    border-radius: 8
+  }
+
+  Exp: "11 expertos\nheurísticos + GRU" {
+    style: {fill: "#FFFFFF"; stroke: "#1F4E79"}
+  }
+  Ph: "P̂ ∈ R³ por experto" {
+    style: {fill: "#FFFFFF"; stroke: "#1F4E79"; bold: true}
+  }
+
+  Exp -> Ph
+}
+
+meta: |md
+  **3. Meta + elegir**
+| {
+  style: {
+    fill: "#F3EEF8"
+    stroke: "#6B4C9A"
+    border-radius: 8
+  }
+
+  MetaLevels: "×3 metas Iocaine\nP.0 / P.1 / P'.0" {
+    style: {fill: "#FFFFFF"; stroke: "#6B4C9A"}
+  }
+  Scores: "Virtual scores\ndecay 0.93 + sticky" {
+    style: {fill: "#FFFFFF"; stroke: "#8B4513"}
+  }
+  Chosen: "P̂ humano elegido" {
+    style: {fill: "#FFFFFF"; stroke: "#6B4C9A"; bold: true}
+  }
+
+  MetaLevels -> Scores -> Chosen
+}
+
+policy: |md
+  **4. Política**
+| {
+  style: {
+    fill: "#FFF1E8"
+    stroke: "#B85C38"
+    border-radius: 8
+  }
+
+  EV: "EV → soft-BR" {
+    style: {fill: "#FFFFFF"; stroke: "#B85C38"}
+  }
+  Mix: "π = (1−α)·Nash + α·soft_best" {
+    style: {fill: "#FFFFFF"; stroke: "#B85C38"; bold: true}
+  }
+
+  EV -> Mix
+}
+
+act: |md
+  **5. Actuar**
+| {
+  style: {
+    fill: "#E8F5EF"
+    stroke: "#0B6E4F"
+    border-radius: 8
+  }
+
+  Sample: "sample a_AI ~ π" {
+    style: {fill: "#FFFFFF"; stroke: "#0B6E4F"; bold: true}
+  }
+}
+
+Reveal: "Revelar jugada humana" {
+  style: {
+    fill: "#FCECEC"
+    stroke: "#A33B3B"
+    border-radius: 8
+  }
+}
+
+observe.Hist -> predict.Exp
+predict.Ph -> meta.MetaLevels
+meta.Chosen -> policy.EV
+policy.Mix -> act.Sample
+act.Sample -> Reveal
+Reveal -> meta.Scores: observe_round {
+  style: {
+    stroke: "#A33B3B"
+    font-color: "#A33B3B"
+  }
+}

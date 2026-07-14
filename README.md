@@ -43,40 +43,15 @@ soft best-response with the Nash uniform policy.
 6. **Adapt** — after the human move is revealed, update expert scores
    (`observe_round`) for the next decision.
 
-```mermaid
-flowchart LR
-  subgraph observe ["1. Observar"]
-    Obs[GameObservation<br/>historial + scores]
-    Mem[SessionPlayerMemory<br/>prior ≤36 rondas]
-    Obs --> Hist[effective_history]
-    Mem --> Hist
-  end
+![Pipeline de inferencia (D2)](docs/inference_pipeline.svg)
 
-  subgraph predict ["2. Predecir"]
-    Hist --> Exp[11 expertos<br/>heurísticos + GRU]
-    Exp --> Ph["P̂ ∈ R³<br/>por experto"]
-  end
+Fuente del diagrama: [`docs/inference_pipeline.d2`](docs/inference_pipeline.d2). Regenerar el SVG:
 
-  subgraph meta ["3. Meta + elegir"]
-    Ph --> Meta["×3 metas Iocaine<br/>P.0 / P.1 / P'.0"]
-    Meta --> Scores[Virtual scores<br/>decay 0.93 + sticky]
-    Scores --> Chosen["P̂ humano elegido"]
-  end
-
-  subgraph policy ["4. Política"]
-    Chosen --> EV["EV = soft-BR"]
-    EV --> Mix["π = (1−α)·Nash + α·soft_best"]
-  end
-
-  subgraph act ["5. Actuar"]
-    Mix --> Sample["sample a_AI ~ π"]
-  end
-
-  Sample --> Reveal[Revelar jugada humana]
-  Reveal -->|observe_round| Scores
+```bash
+d2 docs/inference_pipeline.d2 docs/inference_pipeline.svg
 ```
 
-Diagram scripts (regenerate PNG/PDF under `reports/figures/`):
+Diagramas PNG/PDF detallados (matplotlib):
 
 ```bash
 python scripts/plot_inference_summary.py
