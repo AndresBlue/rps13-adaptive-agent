@@ -43,21 +43,7 @@ soft best-response with the Nash uniform policy.
 6. **Adapt** — after the human move is revealed, update expert scores
    (`observe_round`) for the next decision.
 
-![Pipeline de inferencia (Mermaid, dark 1.8:1)](docs/inference_pipeline.svg)
-
-Fuente: [`docs/inference_pipeline.mmd`](docs/inference_pipeline.mmd). Regenerar (tema oscuro, lienzo 1.8:1):
-
-```bash
-python scripts/render_inference_mermaid.py
-```
-
-Diagramas PNG/PDF detallados (matplotlib):
-
-```bash
-python scripts/plot_inference_summary.py
-python scripts/plot_inference_architecture.py
-```
-
+![Pipeline de inferencia](docs/inference_pipeline.svg)
 
 ## Installation
 
