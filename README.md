@@ -43,12 +43,12 @@ soft best-response with the Nash uniform policy.
 6. **Adapt** — after the human move is revealed, update expert scores
    (`observe_round`) for the next decision.
 
-![Pipeline de inferencia (D2)](docs/inference_pipeline.svg)
+![Pipeline de inferencia (D2, 2:1)](docs/inference_pipeline.svg)
 
-Fuente del diagrama: [`docs/inference_pipeline.d2`](docs/inference_pipeline.d2). Regenerar el SVG:
+Fuente del diagrama: [`docs/inference_pipeline.d2`](docs/inference_pipeline.d2). Regenerar SVG (lienzo 2:1):
 
 ```bash
-d2 docs/inference_pipeline.d2 docs/inference_pipeline.svg
+python scripts/render_inference_d2.py
 ```
 
 Diagramas PNG/PDF detallados (matplotlib):

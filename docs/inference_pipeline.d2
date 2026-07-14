@@ -1,128 +1,148 @@
-# MixtureAdaptiveAgent v2 — pipeline de inferencia
-direction: down
+# MixtureAdaptiveAgent v2 — horizontal rectangular ~2:1
+direction: right
 
 title: {
   label: "Inferencia del agente adaptativo (MixtureAdaptiveAgent v2)"
   near: top-center
-  style: {
-    font-size: 22
-    bold: true
-  }
+  style.font-size: 30
+  style.bold: true
 }
 
 observe: |md
   **1. Observar**
+
+  Historial + sesión
+  → effective_history
 | {
+  width: 210
+  height: 240
   style: {
     fill: "#E8F5EF"
     stroke: "#0B6E4F"
-    border-radius: 8
+    stroke-width: 3
+    border-radius: 12
+    font-size: 18
   }
-
-  Obs: "GameObservation\nhistorial + scores" {
-    style: {fill: "#FFFFFF"; stroke: "#0B6E4F"}
-  }
-  Mem: "SessionPlayerMemory\nprior ≤36 rondas" {
-    style: {fill: "#FFFFFF"; stroke: "#B85C38"}
-  }
-  Hist: "effective_history" {
-    style: {fill: "#FFFFFF"; stroke: "#1C1A17"; bold: true}
-  }
-
-  Obs -> Hist
-  Mem -> Hist
 }
 
 predict: |md
   **2. Predecir**
+
+  11 expertos
+  heurísticos + GRU
+  → P̂ ∈ R³
 | {
+  width: 210
+  height: 240
   style: {
     fill: "#E7EEF6"
     stroke: "#1F4E79"
-    border-radius: 8
+    stroke-width: 3
+    border-radius: 12
+    font-size: 18
   }
-
-  Exp: "11 expertos\nheurísticos + GRU" {
-    style: {fill: "#FFFFFF"; stroke: "#1F4E79"}
-  }
-  Ph: "P̂ ∈ R³ por experto" {
-    style: {fill: "#FFFFFF"; stroke: "#1F4E79"; bold: true}
-  }
-
-  Exp -> Ph
 }
 
 meta: |md
   **3. Meta + elegir**
+
+  ×3 Iocaine
+  + virtual scores
+  → P̂ humano
 | {
+  width: 210
+  height: 240
   style: {
     fill: "#F3EEF8"
     stroke: "#6B4C9A"
-    border-radius: 8
+    stroke-width: 3
+    border-radius: 12
+    font-size: 18
   }
-
-  MetaLevels: "×3 metas Iocaine\nP.0 / P.1 / P'.0" {
-    style: {fill: "#FFFFFF"; stroke: "#6B4C9A"}
-  }
-  Scores: "Virtual scores\ndecay 0.93 + sticky" {
-    style: {fill: "#FFFFFF"; stroke: "#8B4513"}
-  }
-  Chosen: "P̂ humano elegido" {
-    style: {fill: "#FFFFFF"; stroke: "#6B4C9A"; bold: true}
-  }
-
-  MetaLevels -> Scores -> Chosen
 }
 
 policy: |md
   **4. Política**
+
+  soft-BR + Nash
+  π=(1−α)·U
+  +α·soft_best
 | {
+  width: 230
+  height: 240
   style: {
     fill: "#FFF1E8"
     stroke: "#B85C38"
-    border-radius: 8
+    stroke-width: 3
+    border-radius: 12
+    font-size: 18
   }
-
-  EV: "EV → soft-BR" {
-    style: {fill: "#FFFFFF"; stroke: "#B85C38"}
-  }
-  Mix: "π = (1−α)·Nash + α·soft_best" {
-    style: {fill: "#FFFFFF"; stroke: "#B85C38"; bold: true}
-  }
-
-  EV -> Mix
 }
 
 act: |md
   **5. Actuar**
+
+  sample a_AI ~ π
+  → jugada AI
 | {
+  width: 200
+  height: 240
   style: {
     fill: "#E8F5EF"
     stroke: "#0B6E4F"
-    border-radius: 8
-  }
-
-  Sample: "sample a_AI ~ π" {
-    style: {fill: "#FFFFFF"; stroke: "#0B6E4F"; bold: true}
+    stroke-width: 3
+    border-radius: 12
+    font-size: 18
   }
 }
 
-Reveal: "Revelar jugada humana" {
-  style: {
-    fill: "#FCECEC"
-    stroke: "#A33B3B"
-    border-radius: 8
+bottom: {
+  direction: down
+  near: bottom-center
+
+  formula: |md
+    **π = (1 − α) · Nash + α · softmax(EV / T)**  ·  **α = α_cap · confidence**
+  | {
+    width: 1180
+    height: 70
+    style: {
+      fill: "#FFFFFF"
+      stroke: "#8B4513"
+      stroke-width: 2
+      border-radius: 10
+      font-size: 20
+      bold: true
+    }
   }
+
+  feedback: |md
+    **Feedback** — observe_round (±1, decay 0.93) actualiza scores / sticky tras revelar la jugada humana
+  | {
+    width: 1180
+    height: 80
+    style: {
+      fill: "#FCECEC"
+      stroke: "#A33B3B"
+      stroke-width: 3
+      border-radius: 12
+      font-size: 18
+    }
+  }
+
+  formula -> feedback
 }
 
-observe.Hist -> predict.Exp
-predict.Ph -> meta.MetaLevels
-meta.Chosen -> policy.EV
-policy.Mix -> act.Sample
-act.Sample -> Reveal
-Reveal -> meta.Scores: observe_round {
+observe -> predict -> meta -> policy -> act
+act -> bottom.feedback: revelar {
   style: {
     stroke: "#A33B3B"
     font-color: "#A33B3B"
+  }
+}
+bottom.feedback -> meta: scores {
+  style: {
+    stroke: "#A33B3B"
+    font-color: "#A33B3B"
+    stroke-dash: 4
   }
 }
