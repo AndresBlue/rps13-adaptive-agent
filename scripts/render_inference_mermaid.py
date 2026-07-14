@@ -1,4 +1,4 @@
-"""Render Mermaid inference pipeline to a rectangular (~2:1) SVG/PNG."""
+"""Render Mermaid inference pipeline: exact graph, dark theme, forced 1.8:1 fill."""
 
 from __future__ import annotations
 
@@ -15,12 +15,13 @@ ROOT = Path(__file__).resolve().parents[1]
 MMD = ROOT / "docs" / "inference_pipeline.mmd"
 SVG = ROOT / "docs" / "inference_pipeline.svg"
 PNG = ROOT / "docs" / "inference_pipeline.png"
-ASPECT = 2.0
-WIDTH = 2000
-BG = (247, 244, 239)  # #F7F4EF
+ASPECT = 1.8
+WIDTH = 2200
+BG = "#141414"
 
 
-def pad_svg_to_aspect(svg_text: str, aspect: float = ASPECT) -> tuple[str, float, float, float, float]:
+def force_svg_aspect(svg_text: str, aspect: float = ASPECT) -> tuple[str, float, float, float, float]:
+    """Keep content geometry; set outer viewBox/size to exact aspect (letterbox)."""
     m = re.search(r'viewBox="([\d.\-]+) ([\d.\-]+) ([\d.\-]+) ([\d.\-]+)"', svg_text)
     if not m:
         raise ValueError("SVG viewBox not found")
@@ -45,10 +46,14 @@ def pad_svg_to_aspect(svg_text: str, aspect: float = ASPECT) -> tuple[str, float
         tag = re.sub(r'\bheight="[^"]+"', f'height="{new_h:.0f}"', tag, count=1)
     else:
         tag = tag.replace("<svg", f'<svg height="{new_h:.0f}"', 1)
+    if "style=" in tag:
+        tag = re.sub(r'style="[^"]*"', f'style="background-color:{BG};"', tag, count=1)
+    else:
+        tag = tag.replace("<svg", f'<svg style="background-color:{BG};"', 1)
     return svg_text[: m_svg.start()] + tag + svg_text[m_svg.end() :], w, h, new_w, new_h
 
 
-def run_mmdc(out: Path, width: int, height: int | None = None) -> None:
+def run_mmdc(out: Path, width: int) -> None:
     cmd = [
         "npx",
         "--yes",
@@ -58,14 +63,12 @@ def run_mmdc(out: Path, width: int, height: int | None = None) -> None:
         "-o",
         str(out),
         "-b",
-        "#F7F4EF",
+        BG,
         "-w",
         str(width),
         "-s",
         "2",
     ]
-    if height is not None:
-        cmd.extend(["-H", str(height)])
     proc = subprocess.run(cmd, capture_output=True, text=True, shell=True)
     if proc.returncode != 0:
         sys.stderr.write(proc.stdout)
@@ -73,43 +76,62 @@ def run_mmdc(out: Path, width: int, height: int | None = None) -> None:
         raise SystemExit(proc.returncode)
 
 
-def pad_png_to_aspect(path: Path, aspect: float = ASPECT) -> tuple[int, int, int, int]:
-    img = Image.open(path).convert("RGBA")
+def force_png_fill(path: Path, out_w: int, aspect: float = ASPECT) -> tuple[int, int, int, int]:
+    """Resize content to exactly fill out_w x out_w/aspect (may mildly stretch)."""
+    img = Image.open(path).convert("RGB")
     w, h = img.size
-    if w / max(h, 1) > aspect:
-        new_w, new_h = w, int(round(w / aspect))
-    else:
-        new_w, new_h = int(round(h * aspect)), h
-    canvas = Image.new("RGBA", (new_w, new_h), BG + (255,))
-    canvas.paste(img, ((new_w - w) // 2, (new_h - h) // 2), img)
-    canvas.convert("RGB").save(path)
-    return w, h, new_w, new_h
+    out_h = max(1, int(round(out_w / aspect)))
+    filled = img.resize((out_w, out_h), Image.Resampling.LANCZOS)
+    filled.save(path, optimize=True)
+    return w, h, out_w, out_h
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Render Mermaid inference pipeline (~2:1).")
+    parser = argparse.ArgumentParser(description="Render Mermaid inference pipeline (dark, forced 1.8:1).")
     parser.add_argument("--width", type=int, default=WIDTH)
+    parser.add_argument("--aspect", type=float, default=ASPECT)
+    parser.add_argument(
+        "--mode",
+        choices=("letterbox", "fill"),
+        default="letterbox",
+        help="letterbox = keep proportions in 1.8:1; fill = stretch to cover",
+    )
     args = parser.parse_args()
 
-    bar = tqdm(total=4, desc="Mermaid inference", unit="paso")
+    bar = tqdm(total=4, desc="Mermaid dark 1.8:1", unit="paso")
 
     bar.update(1)
-    run_mmdc(SVG, args.width, None)
+    run_mmdc(SVG, args.width)
 
     bar.update(1)
-    padded, cw, ch, nw, nh = pad_svg_to_aspect(SVG.read_text(encoding="utf-8"), ASPECT)
+    svg = SVG.read_text(encoding="utf-8")
+    m = re.search(r'viewBox="([\d.\-]+) ([\d.\-]+) ([\d.\-]+) ([\d.\-]+)"', svg)
+    if not m:
+        raise SystemExit("SVG viewBox missing")
+    _, _, cw, ch = map(float, m.groups())
+    padded, _, _, nw, nh = force_svg_aspect(svg, args.aspect)
     SVG.write_text(padded, encoding="utf-8")
     print(f"SVG content: {cw:.0f}x{ch:.0f} ({cw/max(ch,1):.2f})")
     print(f"SVG canvas:  {nw:.0f}x{nh:.0f} ({nw/nh:.2f})")
 
     bar.update(1)
-    # Tight PNG render (no forced height), then letterbox to 2:1.
-    run_mmdc(PNG, args.width, None)
+    run_mmdc(PNG, args.width)
 
     bar.update(1)
-    pw, ph, pnw, pnh = pad_png_to_aspect(PNG, ASPECT)
+    if args.mode == "fill":
+        pw, ph, pnw, pnh = force_png_fill(PNG, args.width, args.aspect)
+    else:
+        img = Image.open(PNG).convert("RGB")
+        pw, ph = img.size
+        if pw / max(ph, 1) > args.aspect:
+            pnw, pnh = pw, int(round(pw / args.aspect))
+        else:
+            pnw, pnh = int(round(ph * args.aspect)), ph
+        canvas = Image.new("RGB", (pnw, pnh), BG)
+        canvas.paste(img, ((pnw - pw) // 2, (pnh - ph) // 2))
+        canvas.save(PNG, optimize=True)
     print(f"PNG content: {pw}x{ph} ({pw/max(ph,1):.2f})")
-    print(f"PNG canvas:  {pnw}x{pnh} ({pnw/pnh:.2f})")
+    print(f"PNG canvas:  {pnw}x{pnh} ({pnw/pnh:.2f}) mode={args.mode}")
 
     bar.close()
     print(f"Wrote {SVG}")

@@ -1,4 +1,4 @@
-%%{init: {
+﻿%%{init: {
   "flowchart": {
     "htmlLabels": true,
     "curve": "basis",
@@ -6,63 +6,54 @@
     "nodeSpacing": 24,
     "rankSpacing": 36
   },
-  "theme": "base",
+  "theme": "dark",
   "themeVariables": {
     "fontFamily": "Segoe UI, Helvetica, Arial, sans-serif",
     "fontSize": "14px",
-    "primaryColor": "#FFFFFF",
-    "primaryBorderColor": "#1C1A17",
-    "primaryTextColor": "#1C1A17",
-    "lineColor": "#5C564C",
-    "clusterBkg": "#F7F4EF",
-    "clusterBorder": "#5C564C"
+    "darkMode": true,
+    "background": "#141414",
+    "primaryColor": "#1E1E1E",
+    "primaryBorderColor": "#8A8A8A",
+    "primaryTextColor": "#E8E8E8",
+    "secondaryColor": "#222222",
+    "tertiaryColor": "#1A1A1A",
+    "lineColor": "#9A9A9A",
+    "textColor": "#E8E8E8",
+    "mainBkg": "#1E1E1E",
+    "nodeBorder": "#8A8A8A",
+    "clusterBkg": "#1A1A1A",
+    "clusterBorder": "#6A6A6A",
+    "titleColor": "#F0F0F0",
+    "edgeLabelBackground": "#1A1A1A"
   }
 }}%%
 flowchart LR
-  subgraph observe["1. Observar"]
-    Obs["GameObservation<br/>historial + scores"]
-    Mem["SessionPlayerMemory<br/>prior ≤36 rondas"]
-    Obs --> Hist["effective_history"]
+  subgraph observe ["1. Observar"]
+    Obs[GameObservation<br/>historial + scores]
+    Mem[SessionPlayerMemory<br/>prior ≤36 rondas]
+    Obs --> Hist[effective_history]
     Mem --> Hist
   end
 
-  subgraph predict["2. Predecir"]
-    Hist --> Exp["11 expertos<br/>heurísticos + GRU"]
+  subgraph predict ["2. Predecir"]
+    Hist --> Exp[11 expertos<br/>heurísticos + GRU]
     Exp --> Ph["P̂ ∈ R³<br/>por experto"]
   end
 
-  subgraph meta["3. Meta + elegir"]
-    Ph --> MetaLv["×3 metas Iocaine<br/>P.0 / P.1 / P'.0"]
-    MetaLv --> Scores["Virtual scores<br/>decay 0.93 + sticky"]
+  subgraph meta ["3. Meta + elegir"]
+    Ph --> Meta["×3 metas Iocaine<br/>P.0 / P.1 / P'.0"]
+    Meta --> Scores[Virtual scores<br/>decay 0.93 + sticky]
     Scores --> Chosen["P̂ humano elegido"]
   end
 
-  subgraph policy["4. Política"]
-    Chosen --> EV["EV → soft-BR"]
+  subgraph policy ["4. Política"]
+    Chosen --> EV["EV = soft-BR"]
     EV --> Mix["π = (1−α)·Nash + α·soft_best"]
   end
 
-  subgraph act["5. Actuar"]
+  subgraph act ["5. Actuar"]
     Mix --> Sample["sample a_AI ~ π"]
   end
 
-  Sample --> Reveal["Revelar jugada humana"]
+  Sample --> Reveal[Revelar jugada humana]
   Reveal -->|observe_round| Scores
-
-  style Obs fill:#E8F5EF,stroke:#0B6E4F,stroke-width:1.5px
-  style Mem fill:#FFF1E8,stroke:#B85C38,stroke-width:1.5px
-  style Hist fill:#FFFFFF,stroke:#1C1A17,stroke-width:2px
-  style Exp fill:#E7EEF6,stroke:#1F4E79,stroke-width:1.5px
-  style Ph fill:#E7EEF6,stroke:#1F4E79,stroke-width:2px
-  style MetaLv fill:#F3EEF8,stroke:#6B4C9A,stroke-width:1.5px
-  style Scores fill:#FBF3EB,stroke:#8B4513,stroke-width:1.5px
-  style Chosen fill:#F3EEF8,stroke:#6B4C9A,stroke-width:2px
-  style EV fill:#FFF1E8,stroke:#B85C38,stroke-width:1.5px
-  style Mix fill:#FFF1E8,stroke:#B85C38,stroke-width:2px
-  style Sample fill:#E8F5EF,stroke:#0B6E4F,stroke-width:2px
-  style Reveal fill:#FCECEC,stroke:#A33B3B,stroke-width:1.5px
-  style observe fill:#E8F5EF,stroke:#0B6E4F,color:#0B6E4F
-  style predict fill:#E7EEF6,stroke:#1F4E79,color:#1F4E79
-  style meta fill:#F3EEF8,stroke:#6B4C9A,color:#6B4C9A
-  style policy fill:#FFF1E8,stroke:#B85C38,color:#B85C38
-  style act fill:#E8F5EF,stroke:#0B6E4F,color:#0B6E4F
