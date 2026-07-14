@@ -1,4 +1,4 @@
-"""Render Mermaid inference pipeline: exact graph, dark theme, forced 1.8:1 fill."""
+"""Render Mermaid inference pipeline: dark theme, near-square (~1.05) canvas."""
 
 from __future__ import annotations
 
@@ -87,18 +87,18 @@ def force_png_fill(path: Path, out_w: int, aspect: float = ASPECT) -> tuple[int,
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Render Mermaid inference pipeline (dark, forced 1.8:1).")
+    parser = argparse.ArgumentParser(description="Render Mermaid inference pipeline (dark, near-square).")
     parser.add_argument("--width", type=int, default=WIDTH)
     parser.add_argument("--aspect", type=float, default=ASPECT)
     parser.add_argument(
         "--mode",
         choices=("letterbox", "fill"),
-        default="letterbox",
-        help="letterbox = keep proportions in 1.8:1; fill = stretch to cover",
+        default="fill",
+        help="letterbox = pad to aspect; fill = stretch content to cover",
     )
     args = parser.parse_args()
 
-    bar = tqdm(total=4, desc="Mermaid dark 1.8:1", unit="paso")
+    bar = tqdm(total=4, desc="Mermaid near-square", unit="paso")
 
     bar.update(1)
     run_mmdc(SVG, args.width)
