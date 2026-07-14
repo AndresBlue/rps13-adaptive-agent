@@ -1,0 +1,25 @@
+seed: 42
+checkpoint_path: models/actor_critic.pt
+num_episodes: 10000
+learning_rate: 0.0005
+gamma: 0.97
+entropy_coefficient: 0.02
+value_coefficient: 0.5
+hidden_dim: 128
+num_layers: 1
+target_score: 13
+sequence_length: 40
+device: cuda
+require_cuda: true
+
+bot_population:
+  - random
+  - biased_rock
+  - biased_paper
+  - biased_scissors
+  - win_stay_lose_shift
+  - cycle
+  - reverse_cycle
+  - noisy_human_like
+  - switching_strategy
+  - adaptive_counter

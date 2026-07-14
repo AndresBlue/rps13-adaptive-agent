@@ -1,0 +1,60 @@
+{
+  "baseline_majority_accuracy": 0.35796995963739825,
+  "baseline_random_accuracy": 0.3333333333333333,
+  "best_validation_accuracy": 0.3584331370343413,
+  "feature_keys": [
+    "score_diff_norm",
+    "round_number_norm",
+    "human_score_norm",
+    "ai_score_norm",
+    "human_freq_rock",
+    "human_freq_paper",
+    "human_freq_scissors",
+    "recent3_rock",
+    "recent3_paper",
+    "recent3_scissors",
+    "recent5_rock",
+    "recent5_paper",
+    "recent5_scissors",
+    "recent10_rock",
+    "recent10_paper",
+    "recent10_scissors",
+    "streak_norm",
+    "repeat_after_win",
+    "change_after_loss",
+    "change_after_draw",
+    "beats_last_ai_rate",
+    "copy_last_ai_rate",
+    "cycle_rate",
+    "reverse_cycle_rate"
+  ],
+  "final": {
+    "accuracy": 0.3577714550387084,
+    "accuracy_by_class": {
+      "0": 0.9926062846580407,
+      "1": 0.003282051282051282,
+      "2": 0.004349627174813587
+    },
+    "loss": 1.1029145457873486
+  },
+  "history": {
+    "train_loss": [
+      1.098563795704147,
+      1.0975720252571182,
+      1.0971604641504418
+    ],
+    "val_accuracy": [
+      0.3584331370343413,
+      0.3582346324356514,
+      0.3577714550387084
+    ],
+    "val_loss": [
+      1.1010188374569514,
+      1.1005775982055912,
+      1.1029145457873486
+    ]
+  },
+  "majority_class": 0,
+  "num_train_examples": 85197,
+  "num_val_examples": 15113
+}

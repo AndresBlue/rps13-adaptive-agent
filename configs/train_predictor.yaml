@@ -1,0 +1,14 @@
+seed: 42
+dataset_path: data/synthetic/synthetic_matches.csv
+checkpoint_path: models/opponent_predictor.pt
+metrics_path: reports/metrics/predictor_metrics.json
+figures_dir: reports/figures
+
+sequence_length: 20
+batch_size: 64
+epochs: 8
+learning_rate: 0.001
+hidden_dim: 96
+num_layers: 1
+dropout: 0.1
+validation_split: 0.2

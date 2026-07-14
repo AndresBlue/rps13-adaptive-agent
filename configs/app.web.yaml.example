@@ -1,0 +1,17 @@
+# Copy to configs/app.web.yaml for a reverse-proxy deploy (local / private only).
+# app.web.yaml is gitignored and is not part of the public repo.
+#
+# Example: reverse proxy forwards https://example.com/acg/ -> 127.0.0.1:38431
+host: 127.0.0.1
+port: 38431
+target_score: 13
+root_path: /acg
+agent_type: mixture
+agent_version: "2.0.0"
+agent_checkpoint_path: models/opponent_predictor.pt
+human_logs_dir: data/human_logs
+temperature: 0.5
+max_alpha: 0.85
+sticky_max_alpha: 0.95
+min_action_prob: 0.03
+sticky_min_action_prob: 0.01

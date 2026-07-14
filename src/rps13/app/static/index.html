@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ACG — RPS-13</title>
+    <script>
+      (function () {
+        var prefix = "/acg";
+        var onSubpath =
+          location.pathname === prefix || location.pathname.startsWith(prefix + "/");
+        var base = document.createElement("base");
+        base.href = onSubpath ? prefix + "/" : "/";
+        document.head.appendChild(base);
+      })();
+    </script>
+    <link rel="stylesheet" href="static/styles.css?v=6" />
+  </head>
+  <body>
+    <div class="bg-grid" aria-hidden="true"></div>
+
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <p class="eyebrow">local match · first to 13</p>
+          <h1>ACG</h1>
+          <p class="tagline">Piedra, papel o tijera vs agente adaptativo · primero a 13</p>
+        </div>
+        <div class="status status-live" id="status">Cargando</div>
+      </header>
+
+      <section class="scoreboard" aria-label="Marcador">
+        <div class="score score-human">
+          <span class="score-label">Tú</span>
+          <strong id="human-score">0</strong>
+        </div>
+        <div class="round">
+          <span class="score-label">Ronda</span>
+          <strong id="round-number">1</strong>
+        </div>
+        <div class="score score-ai">
+          <span class="score-label">IA</span>
+          <strong id="ai-score">0</strong>
+        </div>
+      </section>
+
+      <section class="race" aria-label="Carrera a 13">
+        <div class="race-row">
+          <span class="race-label">Tú</span>
+          <div class="race-track">
+            <div class="race-fill race-fill-human" id="human-bar" style="width: 0%"></div>
+          </div>
+          <span class="race-value" id="human-bar-label">0/13</span>
+        </div>
+        <div class="race-row">
+          <span class="race-label">IA</span>
+          <div class="race-track">
+            <div class="race-fill race-fill-ai" id="ai-bar" style="width: 0%"></div>
+          </div>
+          <span class="race-value" id="ai-bar-label">0/13</span>
+        </div>
+      </section>
+
+      <section class="arena" aria-label="Resolucion de ronda">
+        <div class="arena-panel arena-human" id="human-card">
+          <span class="arena-tag">Tú</span>
+          <strong class="arena-glyph" id="human-glyph">—</strong>
+          <strong class="arena-choice" id="human-choice">—</strong>
+        </div>
+        <div class="arena-verdict" id="result-card">
+          <span class="arena-tag">Veredicto</span>
+          <strong class="arena-verdict-text" id="round-result">—</strong>
+        </div>
+        <div class="arena-panel arena-ai" id="ai-card">
+          <span class="arena-tag">IA</span>
+          <strong class="arena-glyph" id="ai-glyph">—</strong>
+          <strong class="arena-choice" id="ai-choice">—</strong>
+        </div>
+      </section>
+
+      <section class="result-line" id="result-line">Elige una jugada para jugar.</section>
+
+      <section class="controls" aria-label="Jugada">
+        <button data-move="0" class="move" aria-label="Piedra (1 o R)">
+          <span class="move-glyph">✊</span>
+          <span class="move-label">Piedra</span>
+          <span class="move-key">1</span>
+        </button>
+        <button data-move="1" class="move" aria-label="Papel (2 o P)">
+          <span class="move-glyph">✋</span>
+          <span class="move-label">Papel</span>
+          <span class="move-key">2</span>
+        </button>
+        <button data-move="2" class="move" aria-label="Tijera (3 o T)">
+          <span class="move-glyph">✌️</span>
+          <span class="move-label">Tijera</span>
+          <span class="move-key">3</span>
+        </button>
+      </section>
+
+      <section class="confirm-row" aria-label="Confirmar jugada">
+        <div class="selection" id="selection">Clic en una jugada para jugar · 1/2/3 o R/P/T</div>
+        <button id="confirm" class="confirm" disabled>Confirmar</button>
+      </section>
+
+      <section class="session-stats" aria-label="Sets de sesion">
+        <div class="stat">
+          <span>Sets tú</span>
+          <strong id="stat-human-sets">0</strong>
+        </div>
+        <div class="stat">
+          <span>Sets IA</span>
+          <strong id="stat-ai-sets">0</strong>
+        </div>
+        <div class="stat">
+          <span>Partidas</span>
+          <strong id="stat-total-sets">0</strong>
+        </div>
+        <div class="stat">
+          <span>Racha sets</span>
+          <strong id="stat-set-streak">—</strong>
+        </div>
+      </section>
+
+      <section class="toolbar">
+        <button id="reset" class="btn-secondary">Reiniciar</button>
+      </section>
+
+      <section class="history-wrap">
+        <div class="history-head">
+          <h2>Historial</h2>
+          <span class="history-count" id="history-count">0 rondas</span>
+        </div>
+        <div class="history-scroll">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>R</th>
+                <th>Tú</th>
+                <th>IA</th>
+                <th>Resultado</th>
+                <th>Marcador</th>
+              </tr>
+            </thead>
+            <tbody id="history"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div class="match-overlay hidden" id="match-overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+      <div class="match-overlay-card" id="overlay-card">
+        <p class="overlay-eyebrow">Partida finalizada</p>
+        <h2 id="overlay-title">—</h2>
+        <p class="overlay-score" id="overlay-score">0 — 0</p>
+        <p class="overlay-detail" id="overlay-detail">—</p>
+        <button id="overlay-revancha" class="overlay-cta">Revancha</button>
+      </div>
+    </div>
+
+    <script src="static/app.js?v=6"></script>
+  </body>
+</html>

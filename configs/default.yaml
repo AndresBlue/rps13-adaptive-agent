@@ -1,0 +1,12 @@
+seed: 42
+target_score: 13
+history_window: 20
+
+paths:
+  synthetic_dataset: data/synthetic/synthetic_matches.csv
+  processed_dataset: data/processed/processed_matches.csv
+  opponent_predictor: models/opponent_predictor.pt
+  actor_critic: models/actor_critic.pt
+  human_logs: data/human_logs
+  metrics: reports/metrics
+  figures: reports/figures

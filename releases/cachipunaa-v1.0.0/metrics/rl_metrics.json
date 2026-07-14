@@ -1,0 +1,8 @@
+{
+  "episodes": 10000,
+  "last_100_reward": 8.05,
+  "last_100_win_rate": 0.85,
+  "mean_episode_reward": 3.2143,
+  "note": "Simple recurrent actor-critic baseline; PPO clipping/GAE can be added here.",
+  "win_rate": 0.6535
+}

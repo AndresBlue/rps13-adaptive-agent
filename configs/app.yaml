@@ -1,0 +1,9 @@
+host: 127.0.0.1
+port: 8000
+debug_mode: false
+target_score: 13
+root_path: ""
+agent_type: mixture
+agent_version: "2.0.0"
+agent_checkpoint_path: models/opponent_predictor.pt
+human_logs_dir: data/human_logs

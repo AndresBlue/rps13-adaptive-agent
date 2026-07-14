@@ -1,0 +1,31 @@
+agent: mixture
+matches: 2000
+checkpoint: models/opponent_predictor.pt
+seed: 42
+target_score: 13
+out: reports/metrics/evaluation_v2.csv
+figures_dir: reports/figures
+bots:
+  - random
+  - cycle
+  - reverse_cycle
+  - sticky_rock
+  - sticky_paper
+  - sticky_scissors
+  - period2_ab
+  - period3_abc
+  - period4
+  - biased_rock
+  - biased_paper
+  - biased_scissors
+  - brockbank_self_plus
+  - brockbank_self_minus
+  - brockbank_opp_plus
+  - brockbank_opp_copy
+  - wslc_classic
+  - win_change_lose_stay
+  - pseudo_random_biased
+  - noisy_human_like
+  - avoid_repeat
+  - copy_opponent
+  - human_replay

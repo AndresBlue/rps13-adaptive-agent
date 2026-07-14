@@ -1,0 +1,47 @@
+{
+  "name": "acg",
+  "version": "1.0.0",
+  "codename": "hybrid-synthetic-v1",
+  "released_at": "2026-07-09T23:12:22.122040+00:00",
+  "agent": {
+    "type": "HybridAdaptiveAgent",
+    "checkpoint": "opponent_predictor.pt",
+    "checkpoint_sha256": "acebfafea9c9ead57c223c084e8c62cb5b132eae6022b10553f2ccaa5ae1cdc1",
+    "checkpoint_bytes": 1598670,
+    "hyperparameters": {
+      "sequence_length": 20,
+      "target_score": 13,
+      "temperature": 0.6,
+      "max_alpha": 0.85,
+      "min_action_prob": 0.03
+    }
+  },
+  "predictor_training": {
+    "config": "configs/train_predictor.yaml",
+    "dataset": "data/synthetic/synthetic_matches.csv",
+    "val_accuracy": 0.4627659574468085,
+    "baseline_random": 0.3333333333333333,
+    "baseline_majority": 0.31382978723404253,
+    "architecture": {
+      "hidden_dim": 96,
+      "num_layers": 1,
+      "dropout": 0.1
+    }
+  },
+  "deploy": {
+    "host": "127.0.0.1",
+    "port": 38431,
+    "debug_mode": false,
+    "target_score": 13,
+    "root_path": "/acg",
+    "agent_checkpoint_path": "models/opponent_predictor.pt",
+    "human_logs_dir": "data/human_logs"
+  },
+  "deploy_url": "https://poblete.servehttp.com/acg/",
+  "evaluation_source": "reports/metrics/evaluation_robust.csv",
+  "notes": [
+    "Versión congelada desplegada en producción (julio 2026).",
+    "Usa predictor GRU entrenado en datos sintéticos + política híbrida Nash.",
+    "Ver MODEL_CARD.md para análisis completo vs estrategias."
+  ]
+}

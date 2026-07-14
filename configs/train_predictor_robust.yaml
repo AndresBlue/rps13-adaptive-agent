@@ -1,0 +1,22 @@
+seed: 42
+dataset_path: data/processed/rps_train_full.csv
+checkpoint_path: models/opponent_predictor_robust.pt
+metrics_path: reports/metrics/predictor_robust_metrics.json
+figures_dir: reports/figures
+
+sequence_length: 40
+batch_size: 1024
+epochs: 30
+learning_rate: 0.0007
+hidden_dim: 192
+num_layers: 2
+dropout: 0.2
+validation_split: 0.15
+
+device: cuda
+require_cuda: true
+use_amp: true
+num_workers: 0
+pin_memory: true
+checkpoint_every: 1
+latest_checkpoint_path: models/opponent_predictor_robust_latest.pt

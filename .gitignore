@@ -1,0 +1,38 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Generated data, checkpoints and reports
+data/synthetic/*.csv
+data/synthetic/*.jsonl
+data/processed/*.csv
+data/human_logs/
+models/*.pt
+models/*.pth
+reports/figures/*.png
+reports/metrics/*.json
+reports/metrics/*.csv
+
+# Production / reverse-proxy overlay (keep local only)
+configs/app.web.yaml
+DEPLOY.md
+
+# Local/editor files
+.env
+.DS_Store
+.idea/
+.vscode/
+
+# Public-repo exclusions (no deploy overlay / checkpoints anywhere in tree)
+*.pt
+*.pth
+**/app.web.yaml
+!**/app.web.yaml.example
