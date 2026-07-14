@@ -15,8 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 MMD = ROOT / "docs" / "inference_pipeline.mmd"
 SVG = ROOT / "docs" / "inference_pipeline.svg"
 PNG = ROOT / "docs" / "inference_pipeline.png"
-ASPECT = 1.8
-WIDTH = 2200
+ASPECT = 1.05  # near-square; matches stacked loop layout
+WIDTH = 1400
 BG = "#141414"
 
 
